@@ -35,12 +35,6 @@ export const Home = (): ReactElement => {
     }
   };
 
-  const loadNewPage = (currentPage: number) => {
-    if (!isLoading) {
-      setPage(currentPage + 1);
-    }
-  };
-
   useEffect(() => {
     if (searchInfo === "") {
       setReposData([]);
@@ -52,17 +46,15 @@ export const Home = (): ReactElement => {
   return (
     <HomeStyle>
       <SearchBar
-        setSearchInfo={(txt: string) => {
+        setInfo={(txt: string) => {
           setSearchInfo(txt);
-          // TODO newtxt set page1
-          // setPage(1);
+          setPage(1);
         }}
       />
-      {console.log("page", page)}
 
       <InfiniteScrollLayout
         isLoading={isLoading}
-        setTouchBottom={() => loadNewPage(page)}
+        setTouchBottom={() => !isLoading && setPage(page + 1)}
       >
         {reposData.map((data: repoType, i: number) => (
           <GithubRepoCard data={data} key={i} />
@@ -75,7 +67,6 @@ export const Home = (): ReactElement => {
 };
 
 const HomeStyle = styled.div`
-  border: 1px solid #a00;
   width: 100%;
   max-width: 600px;
   padding: 20px;

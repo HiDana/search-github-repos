@@ -2,27 +2,16 @@ import React, { ReactElement, useState, useEffect } from "react";
 import styled from "styled-components";
 
 interface SearchBarProps {
-  setSearchInfo: (txt: string) => void;
+  setInfo: (txt: string) => void;
 }
 
-export const SearchBar = ({ setSearchInfo }: SearchBarProps): ReactElement => {
+export const SearchBar = ({ setInfo }: SearchBarProps): ReactElement => {
   const [message, setMessage] = useState("");
-  // TODO 放在 useEffect 跟 function 的差別
-  // const handlaTyping = (txt: string) => {
-  //   let typingTimer;
-  //   clearTimeout(typingTimer);
-  //   typingTimer = setTimeout(() => doneTyping(), 2000);
-  //   // console.log("typingTimer", typingTimer);
-  // };
-  // const doneTyping = () => {
-  //   console.log("doneTyping");
-  // };
 
   useEffect(() => {
-    // if (message === "") return;
-    const timer = setTimeout(() => setSearchInfo(message), 700);
+    const timer = setTimeout(() => setInfo(message), 700);
     return () => clearTimeout(timer);
-  }, [message, setSearchInfo]);
+  }, [message]);
   return (
     <SearchBarStyle
       type="text"
