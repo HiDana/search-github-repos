@@ -14,7 +14,9 @@ export const Home = (): ReactElement => {
   const [searchInfo, setSearchInfo] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [reposData, setReposData] = useState<repoType[]>([]);
+  const [reposCount, setReposCount] = useState(0);
   const [page, setPage] = useState(1);
+  const isAllDisplay = reposCount !== 0 && page * 20 >= reposCount;
 
   const getReposData = async (info: string, page: number) => {
     page === 1 && setReposData([]);
@@ -24,6 +26,7 @@ export const Home = (): ReactElement => {
       if (response.kind === "ok") {
         if (page === 1) {
           setReposData(response.data.items);
+          setReposCount(response.data.total_count);
         } else {
           setReposData([...reposData, ...response.data.items]);
         }
@@ -54,13 +57,15 @@ export const Home = (): ReactElement => {
 
       <InfiniteScrollLayout
         isLoading={isLoading}
-        setTouchBottom={() => !isLoading && setPage(page + 1)}
+        setTouchBottom={() => !isLoading && !isAllDisplay && setPage(page + 1)}
       >
         {reposData.map((data: repoType, i: number) => (
           <GithubRepoCard data={data} key={i} />
         ))}
 
         {isLoading && <Loading />}
+
+        {isAllDisplay && searchInfo !== "" && "沒u了"}
       </InfiniteScrollLayout>
     </HomeStyle>
   );

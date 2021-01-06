@@ -5,10 +5,10 @@ import { breakpoints } from "utils";
 import { repoType } from "types";
 
 export const GithubRepoCard = ({ data }: { data: repoType }): ReactElement => {
-  const { name, description, owner } = data;
+  const { name, description, html_url, owner } = data;
   return (
     <GithubRepoCardStyle
-      href="https://link.com.tw"
+      href={html_url}
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -29,7 +29,7 @@ const GithubRepoCardStyle = styled.a`
   border: 1px solid #cccccc;
   border-radius: 10px;
   display: grid;
-  grid-template: repeat(3, auto) / 50px auto;
+  grid-template: 20px 30px auto / 50px auto;
   grid-gap: 5px;
   padding: 10px;
   margin: 10px 0;
@@ -54,7 +54,7 @@ const GithubRepoCardStyle = styled.a`
 
   @media (min-width: ${breakpoints.tablet}px) {
     height: 120px;
-    grid-template: repeat(3, auto) / 70px auto;
+    grid-template: 20px 30px auto / 70px auto;
     padding: 20px;
     &:hover {
       transition: 0.2s;
