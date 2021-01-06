@@ -7,28 +7,46 @@ import {
   Loading,
 } from "components";
 import { getSearchReposApi } from "services";
+import { repoType } from "types";
 
 export const Home = (): ReactElement => {
-  const [searchTxt, setSearchTxt] = useState("");
-  const [isEmpty, setIsEmpty] = useState(true);
-  useEffect(() => {
-    if (searchTxt === "") {
-      setIsEmpty(true);
-    } else {
-      // getSearchReposApi();
-      console.log("searchTxt");
-    }
+  const [searchInfo, setSearchInfo] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [reposData, setReposData] = useState<repoType[]>([]);
 
+  const getReposData = async (info: string, page: number) => {
+    setIsLoading(true);
+    console.log("getReposData", info, page);
+    try {
+      page === 1 && setReposData([]);
+      const response = await getSearchReposApi(info, page);
+      if (response.kind === "ok") {
+        setReposData(response.data.items);
+      }
+    } catch (e) {
+      console.log("e", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (searchInfo === "") {
+      setReposData([]);
+    } else {
+      console.log("useEffect");
+      getReposData(searchInfo, 1);
+    }
     return () => {};
-  }, [searchTxt]);
+  }, [searchInfo, setReposData]);
   return (
     <HomeStyle>
-      <SearchBar setSearchTxt={(txt: string) => setSearchTxt(txt)} />
+      <SearchBar setSearchInfo={(txt: string) => setSearchInfo(txt)} />
       <InfiniteScrollLayout>
-        <Loading />
-        <GithubRepoCard />
-        <GithubRepoCard />
-        <GithubRepoCard />
+        {reposData.map((data: repoType, i: number) => (
+          <GithubRepoCard data={data} key={i} />
+        ))}
+        {isLoading && <Loading />}
       </InfiniteScrollLayout>
     </HomeStyle>
   );

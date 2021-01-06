@@ -1,8 +1,11 @@
 import React, { ReactElement } from "react";
 import styled from "styled-components";
+import LazyLoad from "react-lazyload";
 import { breakpoints } from "utils";
+import { repoType } from "types";
 
-export const GithubRepoCard = (): ReactElement => {
+export const GithubRepoCard = ({ data }: { data: repoType }): ReactElement => {
+  const { name, description, owner } = data;
   return (
     <GithubRepoCardStyle
       href="https://link.com.tw"
@@ -10,14 +13,13 @@ export const GithubRepoCard = (): ReactElement => {
       rel="noopener noreferrer"
     >
       <GithubRepoAvatarStyle>
-        <img
-          src="https://avatars1.githubusercontent.com/u/10575782?v=4"
-          alt="name"
-        />
+        <LazyLoad height={100} once offset={100}>
+          <img src={owner.avatar_url} alt={owner.login} />
+        </LazyLoad>
       </GithubRepoAvatarStyle>
-      <p>name</p>
-      <h5>reponame</h5>
-      <p>description</p>
+      <p>{owner.login}</p>
+      <h5>{name}</h5>
+      <p>{description}</p>
     </GithubRepoCardStyle>
   );
 };
@@ -31,13 +33,23 @@ const GithubRepoCardStyle = styled.a`
   grid-gap: 5px;
   padding: 10px;
   margin: 10px 0;
+  h5,
+  p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
   h5 {
     color: #333333;
     font-size: 16px;
+    -webkit-line-clamp: 1;
   }
   p {
     color: #aaaaaa;
     font-size: 12px;
+    -webkit-line-clamp: 1;
   }
 
   @media (min-width: ${breakpoints.tablet}px) {
