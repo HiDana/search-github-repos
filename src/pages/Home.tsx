@@ -6,6 +6,7 @@ import {
   InfiniteScrollLayout,
   Loading,
 } from "components";
+
 import { getSearchReposApi } from "services";
 import { repoType } from "types";
 
@@ -13,15 +14,19 @@ export const Home = (): ReactElement => {
   const [searchInfo, setSearchInfo] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [reposData, setReposData] = useState<repoType[]>([]);
+  const [page, setPage] = useState(1);
 
   const getReposData = async (info: string, page: number) => {
+    page === 1 && setReposData([]);
     setIsLoading(true);
-    console.log("getReposData", info, page);
     try {
-      page === 1 && setReposData([]);
       const response = await getSearchReposApi(info, page);
       if (response.kind === "ok") {
-        setReposData(response.data.items);
+        if (page === 1) {
+          setReposData(response.data.items);
+        } else {
+          setReposData([...reposData, ...response.data.items]);
+        }
       }
     } catch (e) {
       console.log("e", e);
@@ -30,22 +35,39 @@ export const Home = (): ReactElement => {
     }
   };
 
+  const loadNewPage = (currentPage: number) => {
+    if (!isLoading) {
+      setPage(currentPage + 1);
+    }
+  };
+
   useEffect(() => {
     if (searchInfo === "") {
       setReposData([]);
     } else {
-      console.log("useEffect");
-      getReposData(searchInfo, 1);
+      getReposData(searchInfo, page);
     }
-    return () => {};
-  }, [searchInfo, setReposData]);
+  }, [searchInfo, setReposData, page]);
+
   return (
     <HomeStyle>
-      <SearchBar setSearchInfo={(txt: string) => setSearchInfo(txt)} />
-      <InfiniteScrollLayout>
+      <SearchBar
+        setSearchInfo={(txt: string) => {
+          setSearchInfo(txt);
+          // TODO newtxt set page1
+          // setPage(1);
+        }}
+      />
+      {console.log("page", page)}
+
+      <InfiniteScrollLayout
+        isLoading={isLoading}
+        setTouchBottom={() => loadNewPage(page)}
+      >
         {reposData.map((data: repoType, i: number) => (
           <GithubRepoCard data={data} key={i} />
         ))}
+
         {isLoading && <Loading />}
       </InfiniteScrollLayout>
     </HomeStyle>
