@@ -32,7 +32,7 @@ export const Home = (): ReactElement => {
         }
       }
     } catch (e) {
-      console.log("e", e);
+      console.log(e);
     } finally {
       setIsLoading(false);
     }
