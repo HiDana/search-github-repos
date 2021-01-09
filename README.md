@@ -1,4 +1,12 @@
+## 目標
+
+- 使用 Github api 查詢相關 repos
+  - 避免過於頻繁的 API requests
+- 換頁時以 infinite scroll 呈現
+
 demo [github-repositories-search](https://searchgithubrepos.hidana.me)
+
+![search-github-repos](./search-github-repos.png)
 
 ## 資料夾結構
 
