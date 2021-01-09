@@ -15,7 +15,7 @@ export const SearchBar = ({ setInfo }: SearchBarProps): ReactElement => {
   return (
     <SearchBarStyle
       type="text"
-      placeholder="查詢 github repo"
+      placeholder="查詢 github repos"
       onChange={(e) => setMessage(e.target.value)}
     ></SearchBarStyle>
   );

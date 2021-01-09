@@ -43,6 +43,6 @@ export const InfiniteScrollLayout = ({
   return <InfiniteScrollLayoutStyle>{children}</InfiniteScrollLayoutStyle>;
 };
 
-const InfiniteScrollLayoutStyle = styled.div`
+const InfiniteScrollLayoutStyle = styled.section`
   margin-top: 20px;
 `;
