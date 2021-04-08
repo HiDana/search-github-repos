@@ -1,4 +1,4 @@
-import React, { ReactElement, useState, useEffect } from "react";
+import React, { ReactElement, useState } from "react";
 import styled from "styled-components";
 import {
   SearchBar,
@@ -7,44 +7,19 @@ import {
   Loading,
 } from "components";
 
-import { getSearchReposApi } from "services";
 import { repoType } from "types";
+import { useGetRemoteData } from "utils";
 
 export const Home = (): ReactElement => {
   const [searchInfo, setSearchInfo] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [reposData, setReposData] = useState<repoType[]>([]);
-  const [reposCount, setReposCount] = useState(0);
   const [page, setPage] = useState(1);
-  const isAllDisplay = reposCount !== 0 && page * 20 >= reposCount;
 
-  const getReposData = async (info: string, page: number) => {
-    page === 1 && setReposData([]);
-    setIsLoading(true);
-    try {
-      const response = await getSearchReposApi(info, page);
-      if (response.kind === "ok") {
-        if (page === 1) {
-          setReposData(response.data.items);
-          setReposCount(response.data.total_count);
-        } else {
-          setReposData([...reposData, ...response.data.items]);
-        }
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { responseData, reposCount, isLoading } = useGetRemoteData(
+    searchInfo,
+    page
+  );
 
-  useEffect(() => {
-    if (searchInfo === "") {
-      setReposData([]);
-    } else {
-      getReposData(searchInfo, page);
-    }
-  }, [searchInfo, setReposData, page]);
+  const isAllDisplay = page * 20 >= reposCount;
 
   return (
     <HomeStyle>
@@ -59,7 +34,7 @@ export const Home = (): ReactElement => {
         isLoading={isLoading}
         setTouchBottom={() => !isLoading && !isAllDisplay && setPage(page + 1)}
       >
-        {reposData.map((data: repoType, i: number) => (
+        {responseData.map((data: repoType, i: number) => (
           <GithubRepoCard data={data} key={i} />
         ))}
 
